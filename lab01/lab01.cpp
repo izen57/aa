@@ -149,27 +149,27 @@ int main(void)
 	end_time = getCPUTime();
 
 	std::cout << "\nThe recursive Levenshtein distance: " << s << std::endl;
-	// std::cout << "CPU time used for the recursive Levenshtein distance in nanoseconds: " << (end_time - start_time) * std::pow(10, 9) << std::endl;
+	std::cout << "CPU time used for the recursive Levenshtein distance in nanoseconds: " << (end_time - start_time) * std::pow(10, 9) << std::endl;
 
 	start_time = getCPUTime();
 	s = lev_dist_rec_mtrx(str1, str2);
 	end_time = getCPUTime();
 
 	std::cout << "The recursive-matrix Levenshtein distance: " << s << std::endl;
-	// std::cout << "CPU time used for the recursive-matrix Levenshtein distance in nanoseconds: " << (end_time - start_time) * std::pow(10, 9) << std::endl;
+	std::cout << "CPU time used for the recursive-matrix Levenshtein distance in nanoseconds: " << (end_time - start_time) * std::pow(10, 9) << std::endl;
 
 	start_time = getCPUTime();
 	s = lev_dist_mtrx(str1, str2);
 	end_time = getCPUTime();
 
 	std::cout << "The matrix Levenshtein distance: " << s << std::endl;
-	// std::cout << "CPU time used for the matrix Levenshtein distance in nanoseconds: " << (end_time - start_time) * std::pow(10, 9) << std::endl;
+	std::cout << "CPU time used for the matrix Levenshtein distance in nanoseconds: " << (end_time - start_time) * std::pow(10, 9) << std::endl;
 
 	start_time = getCPUTime();
 	s = damlev_dist_mtrx(str1, str2);
 	end_time = getCPUTime();
 
 	std::cout << "The recursive-matrix Damerau-Levenshtein distance: " << s << std::endl;
-	// std::cout << "CPU time used for the matrix Damerau-Levenshtein distance in nanoseconds: " << (end_time - start_time) * std::pow(10, 9) << std::endl;
+	std::cout << "CPU time used for the matrix Damerau-Levenshtein distance in nanoseconds: " << (end_time - start_time) * std::pow(10, 9) << std::endl;
 	return 0;
 }
