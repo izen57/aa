@@ -4,7 +4,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
-#include "getCPUTime.h"
+#include "../getCPUTime.h"
 
 std::vector<std::vector<int>> init_matrix(std::vector<std::vector<int>> &matrix, std::string str1, std::string str2)
 {
