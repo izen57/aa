@@ -1,0 +1,196 @@
+\section{Технологическая часть}
+
+\subsection{Требования к вводу}
+На вход подаются две матрицы. Операция умножения двух матриц выполнима только в том случае, если число столбцов в первом сомножителе равно числу строк во втором; в этом случае говорят, что матрицы согласованы.
+
+\subsection{Требования к выводу}
+Матрица (результат умножения матриц, поданых на вход).
+
+\subsection{Требования к программе}
+Две пустые матрицы - корректный ввод. Программа не должна аварийно завершаться.
+
+\subsection{Выбор языка программирования}
+Языком программирования был выбран C++.
+
+Время работы алгоритмов было замерено с помощью функции GetCPUTime из <Windows.h>.
+
+\subsection{Сведения о модулях программы}
+Программа состоит из модуля main.cpp. В модуле main одна за другой вызываются подпрограммы каждого рассматриваемого алгоритма, а также подпрограммы подготови к использыванию этих алгоритмов, например создание и инициализация матриц.
+
+На листингах \ref{lst:base}, \ref{lst:vin}, \ref{lst:vin_opt} представлен код алгоритмов.
+\begin{lstlisting}[label=lst:base,caption=Классический алгоритм умножения матриц]
+my_matrix classical_multiplication(my_matrix matrix1, my_matrix matrix2)
+{
+	my_matrix result
+	{
+		std::vector<std::vector<float>>(matrix1.n, std::vector<float>(matrix2.m, 0)),
+		matrix1.n,
+		matrix2.m
+	};
+
+	for (int i = 0; i < result.n; i++)
+		for (int j = 0; j < result.m; j++)
+			for (int k = 0; k < matrix1.m; k++)
+				result.values[i][j] += matrix1.values[i][k] * matrix2.values[k][j];
+
+	return result;
+}
+ \end{lstlisting}
+ 
+\newpage
+\begin{lstlisting}[label=lst:vin,caption=Алгоритм Винограда]
+	my_matrix result
+	{
+		std::vector<std::vector<float>>(matrix1.n, std::vector<float>(matrix2.m, 0)),
+		matrix1.n,
+		matrix2.m
+	};
+
+	std::vector<float> row(matrix1.n, 0);
+	for (int i = 0; i < matrix1.n; i++)
+		for (int j = 0; j < matrix1.m / 2; j++)
+			row[i] += matrix1.values[i][2 * j] * matrix1.values[i][2 * j + 1];
+
+	std::vector<float> column(matrix2.m, 0);
+	for (int i = 0; i < matrix2.m; i++)
+		for (int j = 0; j < matrix1.m / 2; j++)
+			column[i] += matrix2.values[2 * j][i] * matrix2.values[2 * j + 1][i];
+
+	for (int i = 0; i < matrix1.n; i++)
+		for (int j = 0; j < matrix2.m; j++)
+		{
+			result.values[i][j] = -row[i] - column[j];
+			for (int k = 0; k < matrix1.m / 2; k++)
+				result.values[i][j] += (matrix1.values[i][2 * k + 1] + matrix2.values[2 * k][j]) * (matrix1.values[i][2 * k] + matrix2.values[2 * k + 1][j]);
+		}
+
+	if (matrix1.m % 2)
+		for (int i = 0; i < matrix1.n; i++)
+			for (int j = 0; j < matrix2.m; j++)
+				result.values[i][j] += matrix1.values[i][matrix1.m - 1] * matrix2.values[matrix1.m - 1][j];
+
+	return result;
+}
+\end{lstlisting}
+ 
+\newpage
+  \begin{lstlisting}[label=lst:vin_opt,caption=Оптимизированный алгоритм Винограда]
+my_matrix optimized_winograd_algorithm(my_matrix matrix1, my_matrix matrix2)
+{
+	my_matrix result
+	{
+		std::vector<std::vector<float>>(matrix1.n, std::vector<float>(matrix2.m, 0)),
+		matrix1.n,
+		matrix2.m
+	};
+
+	std::vector<float> row(matrix1.n, 0);
+	for (int i = 0; i < matrix1.n; i++)
+		for (int j = 1; j < matrix1.m; j += 2)
+			row[i] -= matrix1.values[i][j] * matrix1.values[i][j - 1];
+
+	std::vector<float> column(matrix2.m, 0);
+	for (int i = 0; i < matrix2.m; i++)
+		for (int j = 1; j < matrix1.m; j += 2)
+			column[i] -= matrix2.values[j][i] * matrix2.values[j - 1][i];
+
+	for (int i = 0; i < matrix1.n; i++)
+		for (int j = 0; j < matrix2.m; j++)
+		{
+			result.values[i][j] += row[i] + column[j];
+			for (int k = 1; k < matrix1.m; k += 2)
+			{
+				result.values[i][j] += (matrix1.values[i][k - 1] + matrix2.values[k][j]) * (matrix1.values[i][k] + matrix2.values[k - 1][j]);
+				if (matrix1.m % 2)
+					result.values[i][j] += matrix1.values[i][matrix1.m - 1] * matrix2.values[matrix1.m - 1][j];
+			}
+		}
+
+	return result;
+}
+ \end{lstlisting}
+
+\newpage
+\subsection{Функциональные тесты}
+	\begin{center}
+	      Таблица 3.1 -- Функциональные тесты
+	\end{center}
+\begin{table}[H]
+\label{tabular:functional_test}
+ \begin{center}
+\begin{tabular}{ | c | c | c | c |}
+			\hline
+			% {\centering GallusGallus \\ CC \\ t = 104}
+			\textbf{Матрица1} & \textbf{Матрица2} & \multicolumn{1}{|p{3cm}|}{\textbf{Ожидаемый результат}} & \multicolumn{1}{|p{3cm}|}{\textbf{Фактический результат}}\\ \hline
+			$\begin{bmatrix} 
+   			1&2&3 \\
+    			4&5&6 \\ 
+   			7&8&9 \\ 
+			\end{bmatrix}$ & 
+			$\begin{bmatrix} 
+   			1&2&3 \\
+    			4&5&6 \\ 
+   			7&8&9 \\ 
+			\end{bmatrix}$ &
+			$\begin{bmatrix} 
+   			30&36&42 \\
+    			66&81&96 \\ 
+   			102&126&150 \\ 
+			\end{bmatrix} $ &
+			$\begin{bmatrix} 
+   			30&36&42 \\
+    			66&81&96 \\ 
+   			102&126&150 \\ 
+			\end{bmatrix} $\\
+			\hline
+
+			
+			$\begin{bmatrix} 
+   			1&1&1 \\
+    			1&1&1 \\ 
+   			1&1&1 \\ 
+			\end{bmatrix}$ & 
+			$\begin{bmatrix} 
+   			1&1&1 \\
+    			1&1&1 \\ 
+			\end{bmatrix}$ &
+			$\begin{matrix} 
+   			\text{Матрицы не могут} \\
+    			\text{быть перемножены} \\ 
+			\end{matrix} $ &
+			$\begin{matrix} 
+   			\text{Матрицы не могут} \\
+    			\text{быть перемножены} \\ 
+			\end{matrix} $ \\
+			\hline
+			
+			$\begin{bmatrix} 
+   			1&2 \\
+    			3&4 \\ 
+   			5&6 \\ 
+			\end{bmatrix}$ & 
+			$\begin{bmatrix} 
+   			1&2&3 \\
+    			4&5&6 \\ 
+			\end{bmatrix}$ &
+			$\begin{bmatrix} 
+   			9&12&15 \\
+    			19&26&33 \\ 
+   			29&40&51 \\ 
+			\end{bmatrix} $ &
+			$\begin{bmatrix} 
+   			9&12&15 \\
+    			19&26&33 \\ 
+   			29&40&51 \\ 
+			\end{bmatrix} $ \\
+			\hline
+		\end{tabular}
+		
+ \end{center}
+\end{table} 
+
+Все реализации алгоритмов на практике показали ожидаемый результат.
+
+\subsection{Вывод}
+
+В этом разделе была представлена реализация алгоритмов классического умножения матриц, алгоритма Винограда, оптимизирвоанного алгоритма Винограда. Тестирование показало, что алгоритмы реализованы правильно и работают корректно.
