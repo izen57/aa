@@ -39,7 +39,7 @@ int sbrt(std::vector<std::vector<int>> &matrix, std::string str1, std::string st
 	{
 		int dist = sbrt(matrix, str1.substr(0, n - 1), str2) + 1;
 		dist = std::min(dist, sbrt(matrix, str1, str2.substr(0, m - 1))/* + 1*/);
-		dist = std::min(dist, sbrt(matrix, str1[n - 1] == str2[m - 1] ? str1.substr(0, n - 1) : str1, str2.substr(0, m - 1))/* + 1*/);
+		dist = std::min(dist, sbrt(matrix, str1[n - 1] == str2[m - 1]? str1.substr(0, n - 1) : str1, str2.substr(0, m - 1))/* + 1*/);
 		matrix[m][n] = dist;
 		return dist;
 	}
@@ -70,7 +70,7 @@ int lev_dist_rec(std::string str1, std::string str2) // Рекурсивное �
 			int dist = lev_dist_rec(str1.substr(0, n - 1), str2) + 1;
 			dist = std::min(dist, lev_dist_rec(str1, str2.substr(0, m - 1)) + 1);
 			dist = str1[n - 1] == str2[m - 1]? std::min(dist, lev_dist_rec(str1.substr(0, n - 1), str2.substr(0, m - 1)))
-																: std::min(dist, lev_dist_rec(str1.substr(0, n - 1), str2.substr(0, m - 1)) + 1);
+				: std::min(dist, lev_dist_rec(str1.substr(0, n - 1), str2.substr(0, m - 1)) + 1);
 			return dist;
 		}
 }
@@ -105,7 +105,7 @@ int damlev_dist_mtrx(std::string str1, std::string str2)
 		{
 			matrix[i][j] = std::min(matrix[i][j], matrix[i - 1][j] + 1);
 			matrix[i][j] = std::min(matrix[i][j], matrix[i][j - 1] + 1);
-			matrix[i][j] = std::min(matrix[i][j], str1[j - 1] == str2[i - 1] ? matrix[i - 1][j - 1] : matrix[i - 1][j - 1] + 1);
+			matrix[i][j] = std::min(matrix[i][j], str1[j - 1] == str2[i - 1]? matrix[i - 1][j - 1] : matrix[i - 1][j - 1] + 1);
 
 			if (i > 1 && j > 1 && str1[j - 2] == str2[i - 1] && str1[j - 1] == str2[i - 2])
 				matrix[i][j] = std::min(matrix[i][j], matrix[i - 2][j - 2] + 1);
