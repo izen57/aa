@@ -9,10 +9,10 @@ using namespace std::chrono;
 class Logger 
 {
 public:
-    Logger() = default;
-    ~Logger() = default;
+	Logger() = default;
+	~Logger() = default;
 
-    static void log_current_event(size_t task_num, const char *const event);
+	static void log_current_event(size_t task_num, const char *const event);
 };
 
 #endif
